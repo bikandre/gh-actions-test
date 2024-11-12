@@ -1,7 +1,10 @@
-FROM centos:centos7
+FROM ubuntu:20.04
 
-RUN yum install httpd -y
+RUN apt-get update && apt-get install -y apache2
+
 COPY index.html /var/www/html/
 
-CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
 EXPOSE 80
+
