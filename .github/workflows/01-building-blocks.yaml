@@ -45,6 +45,6 @@ jobs:
           
       - name: Push docker images to Docker Hub
         run: |
-          docker push $DOCKERHUBREPO:webapp1$TAG
-          docker push $DOCKERHUBREPO:webapp2$TAG
+          docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
+          docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
 
