@@ -40,8 +40,8 @@ jobs:
           cd ..
       - name: Tag docker images with $TAG
         run: |
-          docker tag webapp1 $DOCKERHUBREPO/webapp1
-          docker tag webapp2 $DOCKERHUBREPO/webapp2
+          docker tag webapp1 $DOCKERHUBUSR/webapp1
+          docker tag webapp2 $DOCKERHUBUSR/webapp2
           
       - name: Push docker images to Docker Hub
         run: |
