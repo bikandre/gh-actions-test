@@ -18,7 +18,7 @@ jobs:
 
       # Output the tag value for debugging
       - name: Output Tag Value
-        run: echo "Tag generated: $TAG"
+        run: echo "Tag generated:$TAG
 
       - name: List files in root (debugging)
         run: ls -la
