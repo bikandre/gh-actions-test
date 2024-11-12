@@ -30,7 +30,7 @@ jobs:
       - name: Build docker image for front1
         run: |
           cd front1
-          docker build -t $DOCKERHUBREPO/webapp1:${TAG}.
+          docker build -t $DOCKERHUBREPO/webapp1:${TAG} .
           cd ..
 
       - name: Build docker image for front2
