@@ -18,5 +18,7 @@ jobs:
       - name: Build docker image
         run: |
           cd front1
-          docker build -t my-image-name:latest .
+          docker build -t webapp1 .
+          cd front2
+          docker build -t webapp2 .
 
