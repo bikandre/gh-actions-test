@@ -7,7 +7,10 @@ jobs:
         runs-on: self-hosted
         steps:
             - name: Say hello
-              run: echo "Hello, world"
+              run: |
+              - ls
+              - ls -la
+              - docker --version
     echo-goodbye:
         runs-on: self-hosted
         steps:
