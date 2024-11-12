@@ -6,11 +6,10 @@ jobs:
     echo-hello:
         runs-on: self-hosted
         steps:
-            - name: Say hello
+            - name: build docker image
               run: |
-               ls
-               ls -la
-               docker --version
+               cd 
+               cd front1 ../
     echo-goodbye:
         runs-on: self-hosted
         steps:
