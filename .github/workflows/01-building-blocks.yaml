@@ -40,8 +40,8 @@ jobs:
           cd ..
       - name: Tag docker images with $TAG
         run: |
-          docker tag webapp1 ${{ env.DOCKERHUBREPO }}/s3andre:webapp1${TAG}
-          docker tag webapp2 ${{ env.DOCKERHUBREPO }}/s3andre:webapp2${TAG}
+          docker tag webapp1 andrebik/s3andre:webapp1${TAG}
+          docker tag webapp2 andrebik/s3andre:webapp2${TAG}
           
       - name: Push docker images to Docker Hub
         run: |
