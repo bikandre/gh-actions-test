@@ -1,14 +1,18 @@
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
+# Set environment variables to suppress interactive prompts during the build
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install tzdata and apache2 packages, and set the timezone to avoid interactive prompts
 RUN apt-get update && apt-get install -y \
     tzdata \
-    && rm -rf /var/lib/apt/lists/*
+    apache2 && \
+    ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 
-RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
-
-RUN apt-get install -y apache2
-
+# Copy your web content
 COPY index.html /var/www/html/
 
+# Set the default command to run the web server
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 80
