@@ -9,7 +9,7 @@ jobs:
             - name: build docker image
               run: |
                cd 
-               cd front1 ../
+               cd front1 
     echo-goodbye:
         runs-on: self-hosted
         steps:
