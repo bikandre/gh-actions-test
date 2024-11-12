@@ -4,12 +4,12 @@ on: push
 
 jobs:
     echo-hello:
-        runs-on: awsrunner
+        runs-on: self-hosted
         steps:
             - name: Say hello
               run: echo "Hello, world"
     echo-goodbye:
-        runs-on: awsrunner
+        runs-on: self-hosted
         steps:
             - name: Failed Step
               run: |
