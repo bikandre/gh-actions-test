@@ -6,31 +6,41 @@ on:
       - main
 
 jobs:
-  echo-hello:
-    runs-on: self-hosted
+  build-and-push:
+    runs-on: self-hosted  # Using self-hosted runner
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up the TAG environment variable
       - name: Set up the TAG environment variable
         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
 
-      # Output the tag value for debugging
       - name: Output Tag Value
         run: echo "$TAG"
 
       - name: List files in root (debugging)
         run: ls -la
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
       - name: Build docker image for front1
         run: |
           cd front1
-          docker build -t webapp1:${TAG} .
+          docker build -t $DOCKERHUBREPO/webapp1:${TAG}.
           cd ..
 
       - name: Build docker image for front2
         run: |
           cd front2
-          docker build -t webapp2:${TAG} .
+          docker build -t $DOCKERHUBREPO/webapp2:${TAG} .
           cd ..
+          
+      - name: Push docker images to Docker Hub
+        run: |
+          docker push $DOCKERHUBREPO/webapp1:${TAG}
+          docker push $DOCKERHUBREPO/webapp2:${TAG}
+
