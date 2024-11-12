@@ -4,12 +4,12 @@ on: push
 
 jobs:
     echo-hello:
-        runs-on: ubuntu-latest
+        runs-on: awsrunner
         steps:
             - name: Say hello
               run: echo "Hello, world"
     echo-goodbye:
-        runs-on: ubuntu-latest
+        runs-on: awsrunner
         steps:
             - name: Failed Step
               run: |
