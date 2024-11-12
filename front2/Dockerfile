@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos:centos8
 
 # Update the yum repository to use a different mirror (optional)
 RUN sed -i 's|mirrorlist.centos.org|mirror.centos.org|g' /etc/yum.repos.d/CentOS-Base.repo
