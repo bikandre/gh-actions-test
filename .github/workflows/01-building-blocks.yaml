@@ -6,20 +6,41 @@ on:
       - main
 
 jobs:
-  echo-hello:
-    runs-on: self-hosted
+  build:
+    runs-on: self-hosted 
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: List files in root (debugging)
         run: ls -la
-
-      - name: Build docker image
+        
+      - name: Generate Git Tag
+        id: generate_tag
         run: |
-          cd front1
-          docker build -t webapp1 .
-          cd ..
-          cd front2
-          docker build -t webapp2 .
+          TAG=$(git rev-parse --short=4 HEAD)  # Generate short commit hash
+          echo "TAG=$TAG" >> $GITHUB_ENV  # Store the tag in an environment variable
 
+      - name: Build docker images
+        run: |
+          # Build Docker image for front1
+          cd front1
+          docker build -t webapp1:${{ env.TAG }} . 
+          cd ..
+          
+          # Build Docker image for front2
+          cd front2
+          docker build -t webapp2:${{ env.TAG }} . 
+          cd ..
+
+      # Optionally, output the tag value for debugging
+      - name: Output Tag Value
+        run: echo "Tag generated: ${{ env.TAG }}"
+
+      # Optionally, push Docker images to a registry (example)
+      # - name: Push Docker images
+      #   run: |
+      #     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      #     docker push webapp1:${{ env.TAG }}
+      #     docker push webapp2:${{ env.TAG }}
