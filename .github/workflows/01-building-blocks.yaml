@@ -8,9 +8,9 @@ jobs:
         steps:
             - name: Say hello
               run: |
-              - ls
-              - ls -la
-              - docker --version
+               ls
+               ls -la
+               docker --version
     echo-goodbye:
         runs-on: self-hosted
         steps:
