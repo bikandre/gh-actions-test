@@ -6,19 +6,17 @@ on:
       - main
 
 jobs:
-    echo-hello:
-        runs-on: self-hosted
-        steps:
-            - name: build docker image
-              run: |
-               cd 
-               cd front1 
-    echo-goodbye:
-        runs-on: self-hosted
-        steps:
-            - name: Failed Step
-              run: |
-                echo "I will succeed"
-                exit 0
-            - name: Say goodbye
-              run: echo "Goodbye"
+  echo-hello:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: List files in root (debugging)
+        run: ls -la
+
+      - name: Build docker image
+        run: |
+          cd front1
+          docker build -t my-image-name:latest .
+
