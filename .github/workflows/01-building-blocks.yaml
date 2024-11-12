@@ -30,14 +30,19 @@ jobs:
       - name: Build docker image for front1
         run: |
           cd front1
-          docker build -t $DOCKERHUBREPO/webapp1:${TAG} .
+          docker build -t webapp1:${TAG} .
           cd ..
 
       - name: Build docker image for front2
         run: |
           cd front2
-          docker build -t $DOCKERHUBREPO/webapp2:${TAG} .
+          docker build -t webapp2:${TAG} .
           cd ..
+
+      - name: Tag docker image
+        run: |
+          docker tag webapp1:${TAG} $DOCKERHUBREPO/webapp1:${TAG}
+          docker tag webapp2:${TAG} $DOCKERHUBREPO/webapp2:${TAG}
           
       - name: Push docker images to Docker Hub
         run: |
