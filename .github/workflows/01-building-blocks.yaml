@@ -51,7 +51,7 @@ jobs:
           
       - name: List files in the directory
         run: |
-          ls -R gh-actions-test/helmcharts
+          ls -R /helmcharts
 
       - name: Update values.yaml with image tags
         run: |
