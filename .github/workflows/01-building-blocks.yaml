@@ -62,6 +62,6 @@ jobs:
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
-          git add gh-actions-test/helmcharts/values.yaml
+          git add helmcharts/values.yaml
           git commit -m "Update Helm chart with Docker image tag ${TAG}"
           git push
