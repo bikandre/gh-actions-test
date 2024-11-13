@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: self-hosted 
+    runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,9 +24,9 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUBUSR }} 
-          password: ${{ secrets.DOCKERHUBSECRET }}  
-          
+          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
       - name: Build docker image for front1
         run: |
           cd front1
@@ -43,26 +43,21 @@ jobs:
         run: |
           docker tag webapp1 ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
           docker tag webapp2 ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
-          
+
       - name: Push docker images to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
           docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
 
-      - name: Update Helm chart with new image tags
+      - name: Update values.yaml with image tags
         run: |
-          sed -i "s/tag:.*/tag: ${TAG}/" gh-actions-test/helmcharts/values.yaml
+          sed -i "s|image: webapp1|image: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" gh-actions-test/helmcharts/values.yaml
+          sed -i "s|image: webapp2|image: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" gh-actions-test/helmcharts/values.yaml
 
-      - name: Commit updated Helm chart
+      - name: Commit and push changes to values.yaml
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git add gh-actions-test/helmcharts/values.yaml
-
-          git commit -m "Update image tag to ${TAG} for webapp1 and webapp2"
-
-      - name: Push updated Helm chart to repository
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          git commit -m "Update Helm chart with Docker image tag ${TAG}"
           git push
