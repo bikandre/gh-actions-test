@@ -55,8 +55,8 @@ jobs:
 
       - name: Update values.yaml with image tags
         run: |
-          sed -i "s|image: webapp1|image: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" gh-actions-test/helmcharts/values.yaml
-          sed -i "s|image: webapp2|image: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" gh-actions-test/helmcharts/values.yaml
+          sed -i "s|image: webapp1|image: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
+          sed -i "s|image: webapp2|image: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
 
       - name: Commit and push changes to values.yaml
         run: |
