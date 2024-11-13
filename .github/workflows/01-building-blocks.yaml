@@ -60,10 +60,12 @@ jobs:
         run: |
           sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
           sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
-
+     
+      - name: After updating values.yaml
+        run: cat helmcharts/values.yaml
+     
       - name: Commit and push changes to values.yaml
         run: |
-          git add 
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
