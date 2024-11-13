@@ -66,6 +66,9 @@ jobs:
      
       - name: Commit and push changes to values.yaml
         run: |
+          git add .
+          git commit -m "Committing local changes before pulling latest"
+          git pull origin main
           git pull
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
