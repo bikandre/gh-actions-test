@@ -48,6 +48,10 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
           docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
+          
+      - name: List files in the directory
+        run: |
+          ls -R gh-actions-test/helmcharts
 
       - name: Update values.yaml with image tags
         run: |
