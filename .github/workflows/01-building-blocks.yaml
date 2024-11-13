@@ -59,6 +59,7 @@ jobs:
       - name: Update values.yaml with image tag
         run: |
           sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
+          sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
 
       - name: After updating values.yaml
         run: cat helmcharts/values.yaml
