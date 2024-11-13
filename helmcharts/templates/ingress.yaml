@@ -8,8 +8,8 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/healthcheck-path: /health
 spec:
+  ingressClassName: alb  # Set this to your Ingress controller class name
   rules:
-    - host: yourdomain.com 
       http:
         paths:
           - path: /webapp1
