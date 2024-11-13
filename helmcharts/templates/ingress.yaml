@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /health
 spec:
   rules:
-    - host: 
+    - host: yourdomain.com 
       http:
         paths:
           - path: /webapp1
