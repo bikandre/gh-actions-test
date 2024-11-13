@@ -16,6 +16,8 @@ spec:
       labels:
         app: webappb
     spec:
+      imagePullSecrets:
+        - name: regcred  # Reference the created secret
       containers:
       - name: webappb
         image: {{ .Values.webapp2 }}
