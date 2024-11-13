@@ -1,22 +1,50 @@
 name: 01 - building blocks
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-    echo-hello:
-        runs-on: self-hosted
-        steps:
-            - name: Say hello
-              run: |
-               ls
-               ls -la
-               docker --version
-    echo-goodbye:
-        runs-on: self-hosted
-        steps:
-            - name: Failed Step
-              run: |
-                echo "I will succeed"
-                exit 0
-            - name: Say goodbye
-              run: echo "Goodbye"
+  build-and-push:
+    runs-on: self-hosted  # Using self-hosted runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up the TAG environment variable
+        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+      - name: Output Tag Value
+        run: echo "$TAG"
+
+      - name: List files in root (debugging)
+        run: ls -la
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
+      - name: Build docker image for front1
+        run: |
+          cd front1
+          docker build -t webapp1 .
+          cd ..
+
+      - name: Build docker image for front2
+        run: |
+          cd front2
+          docker build -t webapp2 .
+          cd ..
+      - name: Tag docker images with $TAG
+        run: |
+          docker tag webapp1 ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
+          docker tag webapp2 ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
+          
+      - name: Push docker images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
+          docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
+
