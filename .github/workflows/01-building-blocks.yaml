@@ -51,7 +51,7 @@ jobs:
 
       - name: Update Helm chart with new image tags
         run: |
-          sed -i "s/tag:.*/tag: ${TAG}/" gh-actions-test/helmcharts/values.yaml
+          sed -i "s/tag:.*/tag: ${TAG}/" gh-actions-test/helmcharts
 
       - name: Commit updated Helm chart
         run: |
