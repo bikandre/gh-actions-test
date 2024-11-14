@@ -5,7 +5,8 @@ metadata:
   namespace: default  
   labels:
     app: webapp
-spec:
+spec:  
+  revisionHistoryLimit: 2 
   replicas: 1
   selector:
     matchLabels:
