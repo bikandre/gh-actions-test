@@ -17,10 +17,3 @@ spec:
                 name: webapp-service
                 port:
                   number: 80
-          - path: /webappb
-            pathType: Prefix
-            backend:
-              service:
-                name: apache-webapp-service
-                port:
-                  number: 80
