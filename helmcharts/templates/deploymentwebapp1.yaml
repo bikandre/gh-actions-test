@@ -1,8 +1,8 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp-deployment
+  namespace: default  
   labels:
     app: webapp
 spec:
@@ -17,15 +17,15 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: {{ .Values.webapp1 }}  # Your Helm value for the image
+        image: {{ .Values.webapp1 }}  
         ports:
-        - containerPort: 80   # Expose port 80 inside the container
+        - containerPort: 80   
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: webapp-service
-  namespace: default
+  namespace: default  
   labels:
     app: webapp
   annotations:
@@ -35,8 +35,7 @@ spec:
     app: webapp
   ports:
     - protocol: TCP
-      port: 80          # Expose the service on port 80
-      targetPort: 80    # Direct traffic to container port 80
-  type: ClusterIP     # Prefer ClusterIP for internal cluster access
-
+      port: 80          
+      targetPort: 80   
+  type: ClusterIP    
 
