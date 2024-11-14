@@ -1,26 +1,43 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: multi-path-ingress
-  namespace: default  
+  name: webapp-ingress
+  namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: / 
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/healthcheck-path: /webapp/healthz  # Health check path for webapp
+    nginx.ingress.kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
-  - host: 
+  - host: <your-domain-or-ip>
     http:
       paths:
-      - path: /webapp        
+      - path: /webapp
         pathType: Prefix
         backend:
           service:
-            name: webapp-service   
+            name: webapp-service
             port:
               number: 80
-      - path: /webappb       
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webappb-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/healthcheck-path: /webappb/healthz  # Health check path for webappb
+    nginx.ingress.kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: <your-domain-or-ip>
+    http:
+      paths:
+      - path: /webappb
         pathType: Prefix
         backend:
           service:
-            name: apache-webapp-service  
+            name: webappb-service
             port:
               number: 80
