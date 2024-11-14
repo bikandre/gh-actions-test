@@ -1,14 +1,8 @@
-FROM python:3.6-slim
+FROM httpd:latest
 
-WORKDIR /app
+COPY index.html /usr/local/apache2/htdocs/
 
-COPY requirements.txt .
+EXPOSE 80
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 5000
-
-CMD ["python", "app.py"]
+CMD ["httpd-foreground"]
 

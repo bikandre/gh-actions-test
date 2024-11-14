@@ -1,110 +1,159 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andre's Portfolio</title>
     <style>
-    body{
-        background: navy;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
 
-    .main-div{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
 
-    .nav{
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+        }
 
-        display: flex;
-       
-        flex-direction: row;
-        justify-content: center;
-    }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
 
-    .main-container{
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding: 30px;
-       
-    }
+        section {
+            margin-bottom: 40px;
+        }
 
-    form{
-        background: white;
-        padding: 30px;
-    }
-    
-    .nav-item {
-        font: 30px;
-        color: white;
-        margin-left: 40px;
-        margin-right: 40px;
-    }
+        section h2 {
+            font-size: 2.5em;
+            color: #4CAF50;
+        }
 
-    .nav-item:hover {
-        color: navy;
-        margin-left: 40px;
-        margin-right: 40px;
-        background: white;
-    }
+        .content {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
 
-    textarea{
-        width: 400px;
-        height: 100px;
-    }
+        .skills-list,
+        .projects-list {
+            list-style-type: none;
+            padding: 0;
+        }
 
-    h1{
-        font-size: 60px;
-        color: white;
-    }
-    
-    .submit{
-        font-size: 20px;
-        color: white;
-        background:steelblue;
-        
-    }
-    input{
-        width: 400px;
-    }
+        .skills-list li,
+        .projects-list li {
+            background-color: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-    label{
-        font-size: 30px;
-        
-    }
+        .projects-list li {
+            background-color: #e0f7fa;
+        }
 
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
-
 </head>
 <body>
-    <div class="main-div">
 
-    <div class="nav">
+<header>
+    <h1>Welcome to Andre's Portfolio</h1>
+    <p>DevOps Engineer | Cloud Enthusiast | Problem Solver</p>
+</header>
 
-        <a href="/"><p class="nav-item">Submit Review</p></a>
-        <a href="/reviews"><p class="nav-item">Read Reviews</p></a>
- 
-    </div>
+<div class="container">
 
-    <div class="main-container">
-    <form action="?" method="POST">
+    <!-- About Me Section -->
+    <section id="about-me">
+        <h2>About Me</h2>
+        <div class="content">
+            <p>Hello, I'm Andre. I am a DevOps engineer with a passion for automating and optimizing software development processes. I specialize in cloud technologies, infrastructure as code, and CI/CD pipelines. Over the years, I've worked with teams to streamline workflows and ensure that systems are scalable, reliable, and secure.</p>
+            <p>In my free time, I enjoy learning about new technologies, contributing to open-source projects, and building side projects to hone my skills.</p>
+        </div>
+    </section>
 
-        <label>Name: </label><br> <input name="name" type="text"> <br><br>
-        <label>Review: </label><br> <textarea name="review"></textarea> <br><br>
-        <input type="submit" class="submit" value="Submit Review">
+    <!-- Skills Section -->
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="content">
+            <p>Here are some of the key skills I bring to the table:</p>
+            <ul class="skills-list">
+                <li><strong>Cloud Computing:</strong> AWS, GCP, Azure</li>
+                <li><strong>Containerization & Orchestration:</strong> Docker, Kubernetes, Helm</li>
+                <li><strong>CI/CD Automation:</strong> Jenkins, GitHub Actions, GitLab CI</li>
+                <li><strong>Infrastructure as Code:</strong> Terraform, CloudFormation</li>
+                <li><strong>Monitoring & Logging:</strong> Datadog, Prometheus, Grafana</li>
+                <li><strong>Scripting:</strong> Python, Bash, Shell scripting</li>
+            </ul>
+        </div>
+    </section>
 
-    </form>
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="content">
+            <p>Here are a few projects I have worked on:</p>
+            <ul class="projects-list">
+                <li>
+                    <strong>Cloud Cost Optimization Tool:</strong> A tool designed to analyze cloud spending and suggest cost-saving measures using AWS CloudWatch and AWS Lambda.
+                </li>
+                <li>
+                    <strong>CI/CD Pipeline Setup for Microservices:</strong> Automated deployment pipelines for microservices architecture, using Jenkins, Docker, and Kubernetes.
+                </li>
+                <li>
+                    <strong>Open-source Contributions:</strong> I contribute to various open-source DevOps tools and documentation, focusing on enhancing automation and scalability.
+                </li>
+            </ul>
+        </div>
+    </section>
 
-    </div>
-
-    <div class="main-container">
-
-    <br>
-    <i><h1> Avengers Endgame Reviews </h1></i>
-    </div>
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <div class="content">
+            <p>If you're interested in working together or just want to say hi, feel free to reach out!</p>
+            <p>Email: <a href="mailto:andre@example.com">andre@example.com</a></p>
+            <p>LinkedIn: <a href="https://www.linkedin.com/in/andre" target="_blank">linkedin.com/in/andre</a></p>
+        </div>
+    </section>
 
 </div>
 
-
+<footer>
+    <p>&copy; 2024 Andre's Portfolio | Built with ❤️ using Docker</p>
+</footer>
 
 </body>
 </html>
