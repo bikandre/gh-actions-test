@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: apache-webapp-deployment
-  namespace: default  
   labels:
     app: webappb
 spec:
@@ -16,8 +15,6 @@ spec:
       labels:
         app: webappb
     spec:
-      imagePullSecrets:
-        - name: regcred  # Reference the created secret
       containers:
       - name: webappb
         image: {{ .Values.webapp2 }}
@@ -28,13 +25,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: apache-webapp-service
-  namespace: default  
   labels:
     app: webappb
   annotations:
     alb.ingress.kubernetes.io/healthcheck-path: /webappb/index.html
 spec:
-  type: NodePort
+  type: ClusterIP  # Exposes the service internally within the cluster
   selector:
     app: webappb
   ports:
