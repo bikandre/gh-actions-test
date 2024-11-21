@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build-dreapp:
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -61,29 +61,29 @@ jobs:
           sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
           sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
      
-      - name: After updating values.yaml
-        run: cat helmcharts/values.yaml
+      # - name: After updating values.yaml
+      #   run: cat helmcharts/values.yaml
      
-      - name: Commit and push changes to values.yaml
-        run: |
-          git checkout --theirs helmcharts/values.yaml
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git stash -u
-          git pull origin main --rebase || echo "Merge conflict detected"
-          git checkout --theirs helmcharts/values.yaml
-          git diff --exit-code || echo "Changes detected"
+      # - name: Commit and push changes to values.yaml
+      #   run: |
+      #     git checkout --theirs helmcharts/values.yaml
+      #     git config --local user.name "GitHub Actions"
+      #     git config --local user.email "actions@github.com"
+      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      #     git stash -u
+      #     git pull origin main --rebase || echo "Merge conflict detected"
+      #     git checkout --theirs helmcharts/values.yaml
+      #     git diff --exit-code || echo "Changes detected"
 
-          # If there are changes, commit and push them
-          if [[ -n "$(git diff --name-only)" ]]; then
-            git add helmcharts/values.yaml
-            git commit -m "Resolve merge conflict in values.yaml with remote version"
-            git push origin main
-          else
-            echo "No changes to commit"
-          fi
-          git stash pop
+      #     # If there are changes, commit and push them
+      #     if [[ -n "$(git diff --name-only)" ]]; then
+      #       git add helmcharts/values.yaml
+      #       git commit -m "Resolve merge conflict in values.yaml with remote version"
+      #       git push origin main
+      #     else
+      #       echo "No changes to commit"
+      #     fi
+      #     git stash pop
 
 
   build-react:
@@ -143,19 +143,37 @@ jobs:
           #sed -i "s|backend: andrebik/s3andre:backend[^ ]*|backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml
           sed -i "/^backend:/s|$| ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
      
-      - name: After updating values.yaml
-        run: cat helmcharts/values.yaml
+      # - name: After updating values.yaml
+      #   run: cat helmcharts/values.yaml
 
-      - name: Commit and push changes to values.yaml
-        run: | 
-          git stash -u
-          git pull origin main --rebase || echo "Merge conflict detected"
-          git stash pop
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git add helmcharts/values.yaml
-          git commit -m "Update Helm chart with Docker image tag ${TAG}"
-          git push origin main
-          #git push
+      # - name: Commit and push changes to values.yaml
+      #   run: | 
+      #     git stash -u
+      #     git pull origin main --rebase || echo "Merge conflict detected"
+      #     git stash pop
+      #     git config --local user.name "GitHub Actions"
+      #     git config --local user.email "actions@github.com"
+      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      #     git add helmcharts/values.yaml
+      #     git commit -m "Update Helm chart with Docker image tag ${TAG}"
+      #     git push origin main
+      #     #git push
+  build-push:
+    runs-on: self-hosted
+    steps:
+    - name: After updating values.yaml
+      run: cat helmcharts/values.yaml
+
+    - name: Commit and push changes to values.yaml
+      run: | 
+        git stash -u
+        git pull origin main --rebase || echo "Merge conflict detected"
+        git stash pop
+        git config --local user.name "GitHub Actions"
+        git config --local user.email "actions@github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        git add helmcharts/values.yaml
+        git commit -m "Update Helm chart with Docker image tag ${TAG}"
+        git push origin main
+        #git push
 
