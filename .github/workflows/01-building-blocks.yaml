@@ -127,8 +127,10 @@ jobs:
 
       - name: Update values.yaml with image tag
         run: |
-          sed -i "s|reactapp: andrebik/s3andre:reactapp[^ ]*|reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml
-          sed -i "s|backend: andrebik/s3andre:backend[^ ]*|backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml
+          #sed -i "s|reactapp: andrebik/s3andre:reactapp[^ ]*|reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml
+          sed -i "/^reactapp:/s|$| ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
+          #sed -i "s|backend: andrebik/s3andre:backend[^ ]*|backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml
+          sed -i "/^backend:/s|$| ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
      
       - name: After updating values.yaml
         run: cat helmcharts/values.yaml
