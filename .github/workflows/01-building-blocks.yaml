@@ -67,7 +67,8 @@ jobs:
       - name: Commit and push changes to values.yaml
         run: |
           git stash -u
-          git pull origin main
+          git pull origin main --rebase || echo "Merge conflict detected"
+          git checkout --theirs helmcharts/values.yaml
           git stash pop
           git status
           git config --local user.name "GitHub Actions"
