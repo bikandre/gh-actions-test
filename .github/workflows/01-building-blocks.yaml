@@ -161,19 +161,37 @@ jobs:
   build-push:
     runs-on: self-hosted
     steps:
-    - name: After updating values.yaml
-      run: cat helmcharts/values.yaml
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    steps:
+     - name: Commit changes to values.yaml (if necessary)
+       run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
-    - name: Commit and push changes to values.yaml
-      run: | 
-        git stash -u
-        git pull origin main --rebase || echo "Merge conflict detected"
-        git stash pop
-        git config --local user.name "GitHub Actions"
-        git config --local user.email "actions@github.com"
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-        git add helmcharts/values.yaml
-        git commit -m "Update Helm chart with Docker image tag ${TAG}"
-        git push origin main
-        #git push
+          # Resolve merge conflicts
+          git checkout --theirs helmcharts/values.yaml
+          
+          # Check if there are changes to commit
+          git diff --exit-code || echo "Changes detected"
+
+          # If there are changes, commit them
+          if [[ -n "$(git diff --name-only)" ]]; then
+            git add helmcharts/values.yaml
+            git commit -m "Resolve merge conflict in values.yaml with remote version"
+          else
+            echo "No changes to commit"
+          fi
+
+     - name: Push changes to GitHub
+       run: |
+          # Check if there are any commits to push
+          if git log --oneline | grep -q "Resolve merge conflict"; then
+            git push origin main
+          else
+            echo "No changes to push"
+          fi
+
 
