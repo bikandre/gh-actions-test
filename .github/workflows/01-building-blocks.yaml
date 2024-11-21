@@ -138,10 +138,8 @@ jobs:
 
       - name: Update values.yaml with image tag
         run: |
-          #sed -i "s|reactapp: andrebik/s3andre:reactapp[^ ]*|reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml
-          sed -i "/^reactapp:/s|$| ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
-          #sed -i "s|backend: andrebik/s3andre:backend[^ ]*|backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml
-          sed -i "/^backend:/s|$| ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
+          sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
+          sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
      
       # - name: After updating values.yaml
       #   run: cat helmcharts/values.yaml
@@ -160,34 +158,28 @@ jobs:
       #     #git push
   build-push:
     runs-on: self-hosted
+    needs: [build-dreapp, build-react] 
     steps:
-     - name: Commit changes to values.yaml (if necessary)
-       run: |
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up the TAG environment variable
+        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+      - name: Update values.yaml with image tags
+        run: |
+          sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
+          sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
+          sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
+          sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
+
+      - name: Commit and push changes to values.yaml
+        run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-
-          # Resolve merge conflicts
-          git checkout --theirs helmcharts/values.yaml
-          
-          # Check if there are changes to commit
-          git diff --exit-code || echo "Changes detected"
-
-          # If there are changes, commit them
-          if [[ -n "$(git diff --name-only)" ]]; then
-            git add helmcharts/values.yaml
-            git commit -m "Resolve merge conflict in values.yaml with remote version"
-          else
-            echo "No changes to commit"
-          fi
-
-     - name: Push changes to GitHub
-       run: |
-          # Check if there are any commits to push
-          if git log --oneline | grep -q "Resolve merge conflict"; then
-            git push origin main
-          else
-            echo "No changes to push"
-          fi
+          git add helmcharts/values.yaml
+          git commit -m "Update Helm chart with Docker image tag ${TAG}" || echo "No changes to commit"
+          git push origin main
 
 
