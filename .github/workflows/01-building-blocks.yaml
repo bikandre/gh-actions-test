@@ -116,7 +116,7 @@ jobs:
       - name: Push docker images to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}
-          docker push ${{ secrets.DOCKERHUBREPO }}:backend2${TAG}
+          docker push ${{ secrets.DOCKERHUBREPO }}:backend${TAG}
           
       - name: List files in the directory
         run: |
