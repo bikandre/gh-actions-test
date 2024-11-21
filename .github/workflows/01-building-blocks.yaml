@@ -66,16 +66,16 @@ jobs:
      
       - name: Commit and push changes to values.yaml
         run: |
-          git stash -u
-          git pull origin main --rebase || echo "Merge conflict detected"
           git checkout --theirs helmcharts/values.yaml
-          git stash pop
-          git status
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git stash -u
+          git pull origin main --rebase || echo "Merge conflict detected"
+          git checkout --theirs helmcharts/values.yaml
           git add helmcharts/values.yaml
           git commit -m "Update Helm chart with Docker image tag ${TAG}"
+          git stash pop
           git push origin main
           #git push
 
