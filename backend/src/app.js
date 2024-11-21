@@ -7,7 +7,12 @@ const dataRouter = require('./routes/data');
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Root route
+app.get('/', (req, res) => {
+    res.send('Backend is running');
+});
+
+// API routes
 app.use('/api/data', dataRouter);
 
 app.listen(5000, () => {

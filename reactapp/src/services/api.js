@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_URL = "http://localhost:5000/api/data"; // Update to your backend URL
+const API_URL = "http://backend-service:5000/api/data"; // Update to internal service URL
 
 export const fetchData = async () => {
   try {
