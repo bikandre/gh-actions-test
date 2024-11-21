@@ -161,10 +161,6 @@ jobs:
   build-push:
     runs-on: self-hosted
     steps:
-jobs:
-  build-and-push:
-    runs-on: self-hosted
-    steps:
      - name: Commit changes to values.yaml (if necessary)
        run: |
           git config --local user.name "GitHub Actions"
