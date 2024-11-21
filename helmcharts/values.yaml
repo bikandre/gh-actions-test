@@ -1,4 +1,4 @@
-webapp1: andrebik/s3andre:webapp17e28
-webapp2: andrebik/s3andre:webapp27e28
+webapp1: andrebik/s3andre:webapp187de
+webapp2: andrebik/s3andre:webapp287de
 reactapp:
 backend:
