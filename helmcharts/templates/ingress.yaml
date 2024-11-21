@@ -151,7 +151,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
+      - path: /api/data
         pathType: Prefix
         backend:
           service:
