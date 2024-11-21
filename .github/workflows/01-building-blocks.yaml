@@ -132,20 +132,10 @@ jobs:
      
       - name: After updating values.yaml
         run: cat helmcharts/values.yaml
-      - name: Check for changes
-        run: |
-          if ! git diff --quiet; then
-            echo "Changes detected. Preparing to commit."
-            git add helmcharts/values.yaml
-            git commit -m "Update Helm chart with Docker image tag ${TAG}"
-            git push origin main
-          else
-            echo "No changes to commit."
-          fi
 
       - name: Commit and push changes to values.yaml
         run: |
-          git pull
+          git pull origin main
           git status
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
