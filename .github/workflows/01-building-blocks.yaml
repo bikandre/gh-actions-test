@@ -137,6 +137,7 @@ jobs:
 
       - name: Commit and push changes to values.yaml
         run: | 
+          git pull origin main --rebase
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
@@ -144,5 +145,4 @@ jobs:
           git commit -m "Update Helm chart with Docker image tag ${TAG}"
           git push origin main
           #git push
-
 
