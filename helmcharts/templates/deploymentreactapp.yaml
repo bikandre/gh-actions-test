@@ -12,6 +12,8 @@ spec:
       labels:
         app: react-app
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
         - name: react-app
           image: {{ .Values.reactapp }}
