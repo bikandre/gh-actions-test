@@ -4,7 +4,8 @@ metadata:
   name: react-app
   namespace: default  
 spec:
-  replicas: 2
+  revisionHistoryLimit: 2 
+  replicas: 1
   selector:
     matchLabels:
       app: react-app
