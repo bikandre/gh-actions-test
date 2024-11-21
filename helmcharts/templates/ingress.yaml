@@ -82,15 +82,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: default
-  name: app-ingress-check
+  name: app-ingress-check1
   labels:
-    app: app-ingress-hceck
+    app: app-ingress-check1
   annotations:
     # Ingress type
     # (OLD INGRESS CLASS NOTATION - STILL WORKS BUT RECOMMENDED TO USE IngressClass Resource)
     kubernetes.io/ingress.class: "alb" 
     # Load Balancer Name
-    alb.ingress.kubernetes.io/load-balancer-name: apps-aws-alb-ingress-2
+    alb.ingress.kubernetes.io/load-balancer-name: app-ingress-check1
     # Ingress Core Settings
     alb.ingress.kubernetes.io/scheme: internet-facing
     # Health Check Settings
