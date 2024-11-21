@@ -73,11 +73,18 @@ jobs:
           git stash -u
           git pull origin main --rebase || echo "Merge conflict detected"
           git checkout --theirs helmcharts/values.yaml
-          git add helmcharts/values.yaml
-          git commit -m "Update Helm chart with Docker image tag ${TAG}"
+          git diff --exit-code || echo "Changes detected"
+
+          # If there are changes, commit and push them
+          if [[ -n "$(git diff --name-only)" ]]; then
+            git add helmcharts/values.yaml
+            git commit -m "Resolve merge conflict in values.yaml with remote version"
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi
           git stash pop
-          git push origin main
-          #git push
+
 
   build-react:
     runs-on: self-hosted
