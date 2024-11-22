@@ -3,13 +3,13 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock if you're using yarn)
+# Copy package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Install dependencies using npm
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of the application
 COPY . ./
 
 # Build the React app
