@@ -99,18 +99,17 @@ jobs:
           node-version: 16 # Specify your Node.js version
           cache: 'yarn'
       # Step 3: Install dependencies
-      - name: Install Dependencies
-        run: yarn install
+      - name: Navigate to React App Directory
+        working-directory: reactapp
+        run: pwd
 
-      # Step 4: Build the React app
-      - name: Build App
+      - name: Install Dependencies
+        working-directory: reactapp
+        run: yarn install --frozen-lockfile
+
+      - name: Build React App
+        working-directory: reactapp
         run: yarn build
-      
-      - name: yarn
-        run: |
-          git add yarn.lock
-          git commit -m "Add yarn.lock"
-          git push
 
       # Step 5: Upload build artifacts (optional)
       - name: Upload Build Artifacts
