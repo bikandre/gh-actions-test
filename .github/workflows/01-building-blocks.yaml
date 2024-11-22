@@ -98,7 +98,9 @@ jobs:
           node-version: '16'  # Adjust based on your Node.js version
   
       - name: Install dependencies
-        run: npm install
+        run: |
+            cd reactapp  # Ensure you're in the correct directory
+            npm install
 
       - name: Set up the TAG environment variable
         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
