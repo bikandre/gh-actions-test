@@ -1,4 +1,4 @@
-webapp1: andrebik/s3andre:webapp11f1c
-webapp2: andrebik/s3andre:webapp21f1c
-reactapp: andrebik/s3andre:reactapp1f1c
-backend: andrebik/s3andre:backend1f1c
+webapp1: andrebik/s3andre:webapp15960
+webapp2: andrebik/s3andre:webapp25960
+reactapp: andrebik/s3andre:reactapp5960
+backend: andrebik/s3andre:backend5960
