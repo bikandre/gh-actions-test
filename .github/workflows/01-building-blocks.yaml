@@ -98,7 +98,6 @@ jobs:
         with:
           node-version: 16 # Specify your Node.js version
           cache: 'yarn'
-
       # Step 3: Install dependencies
       - name: Install Dependencies
         run: yarn install
@@ -106,6 +105,12 @@ jobs:
       # Step 4: Build the React app
       - name: Build App
         run: yarn build
+      
+      - name: yarn
+        run: |
+          git add yarn.lock
+          git commit -m "Add yarn.lock"
+          git push
 
       # Step 5: Upload build artifacts (optional)
       - name: Upload Build Artifacts
