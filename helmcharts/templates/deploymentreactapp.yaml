@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: react-app1
+  name: react-app
   namespace: default  
 spec:
   revisionHistoryLimit: 2 
   replicas: 1
   selector:
     matchLabels:
-      app: react-app1
+      app: react-app
   template:
     metadata:
       labels:
-        app: react-app1
+        app: react-app
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-        - name: react-app1
+        - name: react-app
           image: {{ .Values.reactapp }}
           ports:
             - containerPort: 80
@@ -29,7 +29,7 @@ metadata:
   namespace: default  
 spec:
   selector:
-    app: react-app1
+    app: react-app
   ports:
     - protocol: TCP
       port: 80

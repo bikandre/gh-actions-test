@@ -185,28 +185,28 @@ spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: /webapp
             pathType: Prefix
             backend:
               service:
                 name: webapp-service
                 port:
                   number: 80
-          - path: /
+          - path: /webappb
             pathType: Prefix
             backend:
               service:
                 name: apache-webapp-service
                 port:
                   number: 80
-          - path: /
+          - path: /react-app
             pathType: Prefix
             backend:
               service:
                 name: react-app-service
                 port:
                   number: 80
-          - path: /
+          - path: /backend-api
             pathType: Prefix
             backend:
               service:
