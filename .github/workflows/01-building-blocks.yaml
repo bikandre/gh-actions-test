@@ -98,30 +98,7 @@ jobs:
         with:
           node-version: 16 # Specify your Node.js version
           cache: 'yarn'
-      - name: Debug Directory Structure
-        run: ls -al
-          # Ensure you can see the `reactapp` directory in the root folder
-  
-      - name: Navigate to React App and Install Dependencies
-        working-directory: reactapp
-        run: yarn install --frozen-lockfile
-  
-      - name: Build React App
-        working-directory: reactapp
-        run: yarn build
-  
-      - name: Cache Yarn Dependencies (Optional)
-        uses: actions/cache@v3
-        with:
-            path: ~/.cache/yarn
-            key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-yarn-
-  
-      - name: Verify Build Output
-        working-directory: reactapp/build
-        run: ls -al
-
+          
       # Step 5: Upload build artifacts (optional)
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
