@@ -3,14 +3,13 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-# Copy package files and install dependencies using npm
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
-RUN npm ci
+RUN yarn install
 
 COPY . ./
 
-RUN npm run build
+RUN yarn build
 
 # Step 2: Serve the React app with NGINX
 FROM nginx:alpine
