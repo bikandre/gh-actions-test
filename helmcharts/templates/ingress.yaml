@@ -118,7 +118,6 @@ spec:
             port:
               number: 80
 ---
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -158,3 +157,43 @@ spec:
             name: backend-api-service
             port:
               number: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: argocd
+  name: app-ingress-check3
+  labels:
+    app: app-ingress-check3
+  annotations:
+    # Ingress type
+    # (OLD INGRESS CLASS NOTATION - STILL WORKS BUT RECOMMENDED TO USE IngressClass Resource)
+    kubernetes.io/ingress.class: "alb" 
+    # Load Balancer Name
+    alb.ingress.kubernetes.io/load-balancer-name: app-ingress-check3
+    # Ingress Core Settings
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # Health Check Settings
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP 
+    # alb.ingress.kubernetes.io/healthcheck-port: '80'
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-path: /index.html    
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '15'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/success-codes: '200'
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+
+spec:
+  # ingressClassName: aws-elb-ingress-class # Ingress Class
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 80
