@@ -89,6 +89,30 @@ jobs:
   build-react:
     runs-on: self-hosted
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16 # Specify your Node.js version
+          cache: 'yarn'
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: yarn install
+
+      # Step 4: Build the React app
+      - name: Build App
+        run: yarn build
+
+      # Step 5: Upload build artifacts (optional)
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: build/
       - name: Checkout code
         uses: actions/checkout@v3
 
