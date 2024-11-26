@@ -188,6 +188,7 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git pull
           git fetch origin main
           git rebase origin/main || git rebase --abort
           git add helmcharts/values.yaml
