@@ -188,9 +188,12 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git pull
-          git fetch origin main
-          git rebase origin/main || git rebase --abort
-          git add helmcharts/values.yaml
-          git commit -m "Update Helm chart with Docker image tag ${TAG}" || echo "No changes to commit"
-          git push origin main
+          git stash || echo "Nothing to stash"
+          git pull origin main --rebase || echo "Rebase completed or no new changes"
+          git stash pop || echo "Nothing to pop"
+          git push origin main || echo "No changes to push"
+
+
+
+
+
