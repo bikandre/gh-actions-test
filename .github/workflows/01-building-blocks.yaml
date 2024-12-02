@@ -189,6 +189,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git stash || echo "Nothing to stash"
+          git pull
           git pull origin main --rebase || echo "Rebase completed or no new changes"
           git stash pop || echo "Nothing to pop"
           git push origin main || echo "No changes to push"
