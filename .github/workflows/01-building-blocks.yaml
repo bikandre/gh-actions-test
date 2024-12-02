@@ -101,6 +101,7 @@ jobs:
         run: |
             cd reactapp  # Ensure you're in the correct directory
             npm install
+            npm install --legacy-peer-deps  # Use --legacy-peer-deps to handle any dependency issues
 
       - name: Set up the TAG environment variable
         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
