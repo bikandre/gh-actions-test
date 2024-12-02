@@ -99,8 +99,13 @@ jobs:
   
       - name: Install dependencies
         run: |
-            cd reactapp 
+            cd reactapp
             npm install 
+            npm install @craco/craco@latest
+            npm install react-scripts@latest
+            npm install --legacy-peer-deps
+            npm audit fix
+            npm audit fix --force
  
       - name: Run build
         run: npm run build     
