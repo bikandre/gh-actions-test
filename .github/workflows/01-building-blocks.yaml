@@ -101,6 +101,7 @@ jobs:
         run: |
             cd reactapp
             npm install 
+            npm install --force
             npm install @craco/craco@latest
             npm install react-scripts@latest
             npm install --legacy-peer-deps
