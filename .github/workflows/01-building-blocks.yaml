@@ -188,11 +188,11 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git stash push -m "Stashing changes for rebase" || echo "Nothing to stash"
           git pull --rebase
+          git stash pop || echo "Nothing to pop"
           git add helmcharts/values.yaml
           git commit -m "Update values.yaml with new image tags" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
-
-
 
 
