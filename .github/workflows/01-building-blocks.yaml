@@ -103,6 +103,8 @@ jobs:
             npm install @craco/craco@latest
             npm install --legacy-peer-deps  # Use --legacy-peer-deps to handle any dependency issues
             npm audit fix
+            npm audit fix --force
+
       
       - name: Run build
         run: npm run build     
