@@ -100,6 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
             cd reactapp  # Ensure you're in the correct directory
+            npm install @craco/craco@latest
             npm install --legacy-peer-deps  # Use --legacy-peer-deps to handle any dependency issues
             npm audit fix
             npm audit fix --force
