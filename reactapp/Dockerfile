@@ -8,6 +8,7 @@ COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
+RUN npm install aws-xray-sdk-core
 
 # Copy the rest of the application
 COPY . ./
