@@ -100,9 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
             cd reactapp  # Ensure you're in the correct directory
-            npm install
             npm install --legacy-peer-deps  # Use --legacy-peer-deps to handle any dependency issues
-            npm install --force
             npm audit fix
             npm audit fix --force
       

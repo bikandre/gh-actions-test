@@ -3,16 +3,18 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json first to leverage Docker cache
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install
-RUN npm install aws-xray-sdk-core
-RUN npm install crypto-browserify
-RUN npm install @craco/craco
-RUN npm audit fix
-RUN npm audit fix --force
+# Install dependencies and fix audits in a single step
+RUN npm install && npm audit fix && npm audit fix --force
+
+# Copy the rest of the application files
+COPY . ./
+
+# Build the React app
+RUN npm run build
+
 
 
 # Copy the rest of the application
