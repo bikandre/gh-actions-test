@@ -9,6 +9,9 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 RUN npm install aws-xray-sdk-core
+RUN npm install crypto-browserify
+RUN npm install @craco/craco
+
 
 # Copy the rest of the application
 COPY . ./
