@@ -99,13 +99,13 @@ jobs:
   
       - name: Install dependencies
         run: |
-            cd reactapp  # Ensure you're in the correct directory
+            cd reactapp  
+            npm audit fix --force
             npm install @craco/craco@latest
             npm install react-scripts@latest
             npm install --legacy-peer-deps
             npm audit fix
             npm fund
-            npm audit fix --force
 
       
       - name: Run build
