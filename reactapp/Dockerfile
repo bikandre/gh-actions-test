@@ -11,6 +11,7 @@ RUN npm install
 RUN npm install aws-xray-sdk-core
 RUN npm install crypto-browserify
 RUN npm install @craco/craco
+RUN npm audit fix
 
 # Copy the rest of the application
 COPY . ./
