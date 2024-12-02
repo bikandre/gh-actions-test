@@ -105,9 +105,7 @@ jobs:
             npm install @craco/craco@latest
             npm install react-scripts@latest
             npm install --legacy-peer-deps
-            npm fund
-
-      
+ 
       - name: Run build
         run: npm run build     
 
