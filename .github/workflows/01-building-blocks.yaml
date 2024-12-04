@@ -45,14 +45,7 @@ jobs:
               raise ValueError("Environment variables TAG or DOCKERHUBREPO are not set")
           
           # Build, tag, and push Docker image
-          subprocess.run(f
-              "cd front1 && 
-               docker build -t webapp1 . && 
-               docker tag webapp1 {docker_repo}:webapp1{tag} && 
-               docker push {docker_repo}:webapp1{tag}",
-              shell=True,
-              check=True
-          )
+          subprocess.run(f"cd front1 && docker build -t webapp1 . && docker tag webapp1 {docker_repo}:webapp1{tag} && docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
           EOF
           
       # - name: Commit and push changes
