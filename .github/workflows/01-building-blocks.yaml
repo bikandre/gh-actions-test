@@ -1,4 +1,4 @@
-name: 01 - building blocks
+name: Python Workflow Example
 
 on:
   push:
@@ -6,192 +6,267 @@ on:
       - main
 
 jobs:
-  build-dreapp:
-    runs-on: self-hosted
+  build:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up the TAG environment variable
-        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
-
-      - name: Output Tag Value
-        run: echo "$TAG"
-
-      - name: List files in root (debugging)
-        run: ls -la
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+      - name: Set up Python
+        uses: actions/setup-python@v3
         with:
-          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
-          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+          python-version: 3.10  # Adjust to your required Python version
 
-      - name: Build docker image for front1
-        run: |
-          cd front1
-          docker build -t webapp1 .
-          cd ..
-
-      - name: Build docker image for front2
-        run: |
-          cd front2
-          docker build -t webapp2 .
-          cd ..
-
-      - name: Tag docker images with $TAG
-        run: |
-          docker tag webapp1 ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
-          docker tag webapp2 ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
-
-      - name: Push docker images to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
-          docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
-          
-      - name: List files in the directory
-        run: |
-          ls -R helmcharts
-
-      - name: Before updating values.yaml
-        run: cat helmcharts/values.yaml
-
-      - name: Update values.yaml with image tag
-        run: |
-          sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
-          sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
-     
-      # - name: After updating values.yaml
-      #   run: cat helmcharts/values.yaml
-     
-      # - name: Commit and push changes to values.yaml
-      #   run: |
-      #     git checkout --theirs helmcharts/values.yaml
-      #     git config --local user.name "GitHub Actions"
-      #     git config --local user.email "actions@github.com"
-      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-      #     git stash -u
-      #     git pull origin main --rebase || echo "Merge conflict detected"
-      #     git checkout --theirs helmcharts/values.yaml
-      #     git diff --exit-code || echo "Changes detected"
-
-      #     # If there are changes, commit and push them
-      #     if [[ -n "$(git diff --name-only)" ]]; then
-      #       git add helmcharts/values.yaml
-      #       git commit -m "Resolve merge conflict in values.yaml with remote version"
-      #       git push origin main
-      #     else
-      #       echo "No changes to commit"
-      #     fi
-      #     git stash pop
-
-
-  build-react:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # Adjust based on your Node.js version
-  
       - name: Install dependencies
         run: |
-            cd reactapp  # Ensure you're in the correct directory
-            npm install
+          python -m pip install --upgrade pip
+          pip install docker  # Example of using the Docker Python SDK
 
       - name: Set up the TAG environment variable
-        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
-
-      - name: Output Tag Value
-        run: echo "$TAG"
-
-      - name: List files in root (debugging)
-        run: ls -la
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
-          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
-
-      - name: Build docker image for reactapp
         run: |
-          cd reactapp
-          docker build -t reactapp .
-          cd ..
+          echo "TAG=$(python -c 'import subprocess; print(subprocess.check_output([\"git\", \"rev-parse\", \"--short=4\", \"HEAD\"]).decode().strip())')" >> $GITHUB_ENV
 
-      - name: Build docker image for backend
+      - name: Build Docker images with Python script
         run: |
-          cd backend
-          docker build -t backend .
-          cd ..
+          python - <<'EOF'
+          import os
+          import subprocess
 
-      - name: Tag docker images with $TAG
+          tag = os.getenv("TAG")
+          docker_repo = os.getenv("DOCKERHUBREPO", "andrebik/s3andre")
+
+          subprocess.run(f"docker build -t webapp1 .", shell=True, check=True)
+          subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
+          subprocess.run(f"docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
+          EOF
+
+      - name: Update Helm chart values with Python
         run: |
-          docker tag reactapp ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}
-          docker tag backend ${{ secrets.DOCKERHUBREPO }}:backend${TAG}
+          python - <<'EOF'
+          import os
+          file_path = "helmcharts/values.yaml"
+          docker_repo = os.getenv("DOCKERHUBREPO", "andrebik/s3andre")
+          tag = os.getenv("TAG")
 
-      - name: Push docker images to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}
-          docker push ${{ secrets.DOCKERHUBREPO }}:backend${TAG}
-          
-      - name: List files in the directory
-        run: |
-          ls -R helmcharts
+          with open(file_path, "r") as file:
+              data = file.read()
 
-      - name: Before updating values.yaml
-        run: cat helmcharts/values.yaml
+          updated_data = data.replace(
+              "andrebik/s3andre:webapp1", f"{docker_repo}:webapp1{tag}"
+          )
 
-      - name: Update values.yaml with image tag
-        run: |
-          sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
-          sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
-     
-      # - name: After updating values.yaml
-      #   run: cat helmcharts/values.yaml
+          with open(file_path, "w") as file:
+              file.write(updated_data)
 
-      # - name: Commit and push changes to values.yaml
-      #   run: | 
-      #     git stash -u
-      #     git pull origin main --rebase || echo "Merge conflict detected"
-      #     git stash pop
-      #     git config --local user.name "GitHub Actions"
-      #     git config --local user.email "actions@github.com"
-      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-      #     git add helmcharts/values.yaml
-      #     git commit -m "Update Helm chart with Docker image tag ${TAG}"
-      #     git push origin main
-      #     #git push
-  build-push:
-    runs-on: self-hosted
-    needs: [build-dreapp, build-react] 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+          print(f"Updated {file_path} with new Docker image tags.")
+          EOF
 
-      - name: Set up the TAG environment variable
-        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
-
-      - name: Update values.yaml with image tags
-        run: |
-          sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
-          sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
-          sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
-          sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
-
-      - name: Commit and push changes to values.yaml
+      - name: Commit and push changes
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git stash || echo "Nothing to stash"
-          git pull origin main --rebase || echo "Rebase completed or no new changes"
-          git stash pop || echo "Nothing to pop"
-          git push origin main || echo "No changes to push"
+          git add helmcharts/values.yaml
+          git commit -m "Update Helm chart with Docker image tag"
+          git push origin main
+
+
+
+
+# name: 01 - building blocks
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build-dreapp:
+#     runs-on: self-hosted
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up the TAG environment variable
+#         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+#       - name: Output Tag Value
+#         run: echo "$TAG"
+
+#       - name: List files in root (debugging)
+#         run: ls -la
+
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+#           password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
+#       - name: Build docker image for front1
+#         run: |
+#           cd front1
+#           docker build -t webapp1 .
+#           cd ..
+
+#       - name: Build docker image for front2
+#         run: |
+#           cd front2
+#           docker build -t webapp2 .
+#           cd ..
+
+#       - name: Tag docker images with $TAG
+#         run: |
+#           docker tag webapp1 ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
+#           docker tag webapp2 ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
+
+#       - name: Push docker images to Docker Hub
+#         run: |
+#           docker push ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}
+#           docker push ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}
+          
+#       - name: List files in the directory
+#         run: |
+#           ls -R helmcharts
+
+#       - name: Before updating values.yaml
+#         run: cat helmcharts/values.yaml
+
+#       - name: Update values.yaml with image tag
+#         run: |
+#           sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
+#           sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
+     
+#       # - name: After updating values.yaml
+#       #   run: cat helmcharts/values.yaml
+     
+#       # - name: Commit and push changes to values.yaml
+#       #   run: |
+#       #     git checkout --theirs helmcharts/values.yaml
+#       #     git config --local user.name "GitHub Actions"
+#       #     git config --local user.email "actions@github.com"
+#       #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+#       #     git stash -u
+#       #     git pull origin main --rebase || echo "Merge conflict detected"
+#       #     git checkout --theirs helmcharts/values.yaml
+#       #     git diff --exit-code || echo "Changes detected"
+
+#       #     # If there are changes, commit and push them
+#       #     if [[ -n "$(git diff --name-only)" ]]; then
+#       #       git add helmcharts/values.yaml
+#       #       git commit -m "Resolve merge conflict in values.yaml with remote version"
+#       #       git push origin main
+#       #     else
+#       #       echo "No changes to commit"
+#       #     fi
+#       #     git stash pop
+
+
+#   build-react:
+#     runs-on: self-hosted
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '16'  # Adjust based on your Node.js version
+  
+#       - name: Install dependencies
+#         run: |
+#             cd reactapp  # Ensure you're in the correct directory
+#             npm install
+
+#       - name: Set up the TAG environment variable
+#         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+#       - name: Output Tag Value
+#         run: echo "$TAG"
+
+#       - name: List files in root (debugging)
+#         run: ls -la
+
+#       - name: Log in to Docker Hub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+#           password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
+#       - name: Build docker image for reactapp
+#         run: |
+#           cd reactapp
+#           docker build -t reactapp .
+#           cd ..
+
+#       - name: Build docker image for backend
+#         run: |
+#           cd backend
+#           docker build -t backend .
+#           cd ..
+
+#       - name: Tag docker images with $TAG
+#         run: |
+#           docker tag reactapp ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}
+#           docker tag backend ${{ secrets.DOCKERHUBREPO }}:backend${TAG}
+
+#       - name: Push docker images to Docker Hub
+#         run: |
+#           docker push ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}
+#           docker push ${{ secrets.DOCKERHUBREPO }}:backend${TAG}
+          
+#       - name: List files in the directory
+#         run: |
+#           ls -R helmcharts
+
+#       - name: Before updating values.yaml
+#         run: cat helmcharts/values.yaml
+
+#       - name: Update values.yaml with image tag
+#         run: |
+#           sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
+#           sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
+     
+#       # - name: After updating values.yaml
+#       #   run: cat helmcharts/values.yaml
+
+#       # - name: Commit and push changes to values.yaml
+#       #   run: | 
+#       #     git stash -u
+#       #     git pull origin main --rebase || echo "Merge conflict detected"
+#       #     git stash pop
+#       #     git config --local user.name "GitHub Actions"
+#       #     git config --local user.email "actions@github.com"
+#       #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+#       #     git add helmcharts/values.yaml
+#       #     git commit -m "Update Helm chart with Docker image tag ${TAG}"
+#       #     git push origin main
+#       #     #git push
+#   build-push:
+#     runs-on: self-hosted
+#     needs: [build-dreapp, build-react] 
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up the TAG environment variable
+#         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+#       - name: Update values.yaml with image tags
+#         run: |
+#           sed -i "s|webapp1: andrebik/s3andre:webapp1[^ ]*|webapp1: ${{ secrets.DOCKERHUBREPO }}:webapp1${TAG}|" helmcharts/values.yaml
+#           sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
+#           sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
+#           sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
+
+#       - name: Commit and push changes to values.yaml
+#         run: |
+#           git config --local user.name "GitHub Actions"
+#           git config --local user.email "actions@github.com"
+#           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+#           git stash || echo "Nothing to stash"
+#           git pull origin main --rebase || echo "Rebase completed or no new changes"
+#           git stash pop || echo "Nothing to pop"
+#           git push origin main || echo "No changes to push"
 
 
 
