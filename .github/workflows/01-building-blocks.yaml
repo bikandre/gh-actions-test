@@ -36,18 +36,18 @@ jobs:
           tag = os.getenv("TAG")
           docker_repo = os.getenv("DOCKERHUBREPO")
           subprocess.run(f"cd front1", shell=True, check=True)
-          # subprocess.run(f"docker build -t webapp1 .", shell=True, check=True)
+          subprocess.run(f"docker build -t webapp1 .", shell=True, check=True)
           # subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
           # subprocess.run(f"docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
           # EOF
 
-      - name: Commit and push changes
-        run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-          git add helmcharts/values.yaml
-          git commit -m "Update Helm chart with Docker image tag"
-          git push origin main
+      # - name: Commit and push changes
+      #   run: |
+      #     git config --local user.name "GitHub Actions"
+      #     git config --local user.email "actions@github.com"
+      #     git add helmcharts/values.yaml
+      #     git commit -m "Update Helm chart with Docker image tag"
+      #     git push origin main
 
 
 
