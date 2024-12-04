@@ -36,7 +36,7 @@ jobs:
           tag = os.getenv("TAG")
           docker_repo = os.getenv("DOCKERHUBREPO")
           subprocess.run(f"cd front1 && docker build -t webapp1 .", shell=True, check=True)
-          # subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
+          subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
           # subprocess.run(f"docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
           # EOF
 
