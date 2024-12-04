@@ -25,19 +25,36 @@ jobs:
 
       - name: Set up the TAG environment variable
         run: |
-          echo "TAG=$(python -c 'import subprocess; print(subprocess.check_output([\"git\", \"rev-parse\", \"--short=4\", \"HEAD\"]).decode().strip())')" >> $GITHUB_ENV
+          echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
 
       - name: Build Docker images with Python script
+        env:
+          TAG: ${{ env.TAG }}
+          DOCKERHUBREPO: ${{ secrets.DOCKERHUBREPO }}
         run: |
-          python - <<'EOF'
+          python3 - <<'EOF'
           import os
           import subprocess
-
+          
+          # Retrieve environment variables
           tag = os.getenv("TAG")
           docker_repo = os.getenv("DOCKERHUBREPO")
-          subprocess.run(f"cd front1 && \n docker build -t webapp1 . && \n docker tag webapp1 {docker_repo}:webapp1{tag} && \n docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
+          
+          # Validate environment variables
+          if not tag or not docker_repo:
+              raise ValueError("Environment variables TAG or DOCKERHUBREPO are not set")
+          
+          # Build, tag, and push Docker image
+          subprocess.run(
+              "cd front1 && "
+              "docker build -t webapp1 . && "
+              f"docker tag webapp1 {docker_repo}:webapp1{tag} && "
+              f"docker push {docker_repo}:webapp1{tag}",
+              shell=True,
+              check=True
+          )
           EOF
-
+          
       # - name: Commit and push changes
       #   run: |
       #     git config --local user.name "GitHub Actions"
