@@ -3,13 +3,11 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to leverage Docker cache
+# Copy package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Install dependencies and fix audits in a single step
-RUN npm install react-scripts@4.0.0
-
-RUN npm install && npm audit fix --force && npm audit && npm fund
+# Install dependencies
+RUN npm install
 
 # Copy the rest of the application
 COPY . ./
