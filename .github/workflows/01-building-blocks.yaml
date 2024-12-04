@@ -46,7 +46,7 @@ jobs:
           
           # Build, tag, and push Docker image
           subprocess.run("cd front1, shell=True, check=True)
-          subprocess.run(f"docker build -t webapp1 ., check=True)
+          subprocess.run("docker build -t webapp1 ., shell=True check=True)
           EOF
           
       # - name: Commit and push changes
