@@ -99,17 +99,8 @@ jobs:
   
       - name: Install dependencies
         run: |
-            cd reactapp
-            npm install 
-            npm install --force
-            npm install @craco/craco@latest
-            npm install react-scripts@latest
-            npm install --legacy-peer-deps
-            npm audit fix
-            npm audit fix --force
- 
-      - name: Run build
-        run: npm run build     
+            cd reactapp  # Ensure you're in the correct directory
+            npm install
 
       - name: Set up the TAG environment variable
         run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
@@ -197,11 +188,11 @@ jobs:
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git stash push -m "Stashing changes for rebase" || echo "Nothing to stash"
-          git pull --rebase
+          git stash || echo "Nothing to stash"
+          git pull origin main --rebase || echo "Rebase completed or no new changes"
           git stash pop || echo "Nothing to pop"
-          git add helmcharts/values.yaml
-          git commit -m "Update values.yaml with new image tags" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
+
+
 
 
