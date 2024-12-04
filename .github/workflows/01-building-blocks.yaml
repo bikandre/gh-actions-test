@@ -45,10 +45,12 @@ jobs:
               raise ValueError("Environment variables TAG or DOCKERHUBREPO are not set")
           
           # Build, tag, and push Docker image
-          subprocess.run("cd front1, shell=True, check=True)
-          subprocess.run("docker build -t webapp1 ., shell=True check=True)
+          subprocess.run("cd front1", shell=True, check=True)
+          subprocess.run("docker build -t webapp1 .", shell=True, check=True)
+          subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
+          subprocess.run(f"docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
           EOF
-          
+
       # - name: Commit and push changes
       #   run: |
       #     git config --local user.name "GitHub Actions"
