@@ -34,32 +34,11 @@ jobs:
           import subprocess
 
           tag = os.getenv("TAG")
-          docker_repo = os.getenv("DOCKERHUBREPO", "andrebik/s3andre")
-
+          docker_repo = os.getenv("DOCKERHUBREPO")
+          subprocess.run(f"cd front1" )
           subprocess.run(f"docker build -t webapp1 .", shell=True, check=True)
           subprocess.run(f"docker tag webapp1 {docker_repo}:webapp1{tag}", shell=True, check=True)
           subprocess.run(f"docker push {docker_repo}:webapp1{tag}", shell=True, check=True)
-          EOF
-
-      - name: Update Helm chart values with Python
-        run: |
-          python - <<'EOF'
-          import os
-          file_path = "helmcharts/values.yaml"
-          docker_repo = os.getenv("DOCKERHUBREPO", "andrebik/s3andre")
-          tag = os.getenv("TAG")
-
-          with open(file_path, "r") as file:
-              data = file.read()
-
-          updated_data = data.replace(
-              "andrebik/s3andre:webapp1", f"{docker_repo}:webapp1{tag}"
-          )
-
-          with open(file_path, "w") as file:
-              file.write(updated_data)
-
-          print(f"Updated {file_path} with new Docker image tags.")
           EOF
 
       - name: Commit and push changes
