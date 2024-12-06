@@ -185,12 +185,13 @@ jobs:
 
       - name: Commit and push changes to values.yaml
         run: |
+          git pull
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git pull 
+          git stash -u || echo "Nothing to stash"
+          git pull origin main || echo "Merge conflict detected"
           git stash pop || echo "Nothing to pop"
-          git push origin main || echo "No changes to push"
 
 
 
