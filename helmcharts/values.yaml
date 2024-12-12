@@ -1,8 +1,15 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 webapp1: andrebik/s3andre:webapp1ebb2
 webapp2: andrebik/s3andre:webapp2ebb2
 reactapp: andrebik/s3andre:reactappebb2
 backend: andrebik/s3andre:backendebb2
+=======
+webapp1: andrebik/s3andre:webapp1c025
+webapp2: andrebik/s3andre:webapp2c025
+reactapp: andrebik/s3andre:reactappc025
+backend: andrebik/s3andre:backendc025
+>>>>>>> Stashed changes
 newapp:
 =======
 webapp1: andrebik/s3andre:webapp189c6
