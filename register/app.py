@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')  # Specify static folder for static files
 
 # Configuration for PostgreSQL database
 POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
@@ -56,6 +56,11 @@ def register():
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "OK"}), 200
+
+# Route to serve the index.html file
+@app.route('/')
+def index():
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     # Ensure tables are created
