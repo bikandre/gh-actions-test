@@ -18,11 +18,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# User Model
+# User Model (Updated with address and location)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(128), nullable=False)  # Added name field
+    address = db.Column(db.String(256), nullable=False)  # Added address field
+    location = db.Column(db.String(128), nullable=False)  # Added location field
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -31,11 +34,15 @@ class User(db.Model):
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    if not data or not data.get('username') or not data.get('password'):
-        return jsonify({"error": "Username and password are required"}), 400
     
+    if not data or not data.get('username') or not data.get('password') or not data.get('name') or not data.get('address') or not data.get('location'):
+        return jsonify({"error": "Username, password, name, address, and location are required"}), 400
+
     username = data['username']
     password = data['password']
+    name = data['name']
+    address = data['address']
+    location = data['location']
 
     # Check if user already exists
     existing_user = User.query.filter_by(username=username).first()
@@ -45,8 +52,8 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Create new user
-    new_user = User(username=username, password=hashed_password)
+    # Create a new user with the additional fields
+    new_user = User(username=username, password=hashed_password, name=name, address=address, location=location)
     db.session.add(new_user)
     db.session.commit()
 
@@ -60,11 +67,7 @@ def health():
 # Route to serve the index.html file
 @app.route('/')
 def index():
-    # Ensure the index.html exists in the static folder
-    if os.path.exists(os.path.join(app.static_folder, 'index.html')):
-        return send_from_directory(app.static_folder, 'index.html')
-    else:
-        return jsonify({"error": "index.html not found"}), 404
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     # Ensure tables are created
