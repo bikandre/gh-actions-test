@@ -2,3 +2,4 @@ webapp1: andrebik/s3andre:webapp1ebb2
 webapp2: andrebik/s3andre:webapp2ebb2
 reactapp: andrebik/s3andre:reactappebb2
 backend: andrebik/s3andre:backendebb2
+newapp: 

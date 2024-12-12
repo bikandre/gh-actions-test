@@ -166,9 +166,71 @@ jobs:
       #     git commit -m "Update Helm chart with Docker image tag ${TAG}"
       #     git push origin main
       #     #git push
+
+  build-app:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up the TAG environment variable
+        run: echo "TAG=$(git rev-parse --short=4 HEAD)" >> $GITHUB_ENV
+
+      - name: Output Tag Value
+        run: echo "$TAG"
+
+      - name: List files in root (debugging)
+        run: ls -la
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUBUSR }}  # GitHub secret for Docker username
+          password: ${{ secrets.DOCKERHUBSECRET }}  # GitHub secret for Docker password or token
+
+      - name: Build docker image for reactapp
+        run: |
+          cd register
+          docker build -t newapp .
+          cd ..
+
+      - name: Tag docker images with $TAG
+        run: |
+          docker tag newapp ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}
+
+      - name: Push docker images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}
+          
+      - name: List files in the directory
+        run: |
+          ls -R helmcharts
+
+      - name: Before updating values.yaml
+        run: cat helmcharts/values.yaml
+
+      - name: Update values.yaml with image tag
+        run: |
+          sed -i "/^newapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}" >> helmcharts/values.yaml
+     
+      # - name: After updating values.yaml
+      #   run: cat helmcharts/values.yaml
+
+      # - name: Commit and push changes to values.yaml
+      #   run: | 
+      #     git stash -u
+      #     git pull origin main --rebase || echo "Merge conflict detected"
+      #     git stash pop
+      #     git config --local user.name "GitHub Actions"
+      #     git config --local user.email "actions@github.com"
+      #     git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+      #     git add helmcharts/values.yaml
+      #     git commit -m "Update Helm chart with Docker image tag ${TAG}"
+      #     git push origin main
+      #     #git push
   build-push:
     runs-on: self-hosted
-    needs: [build-dreapp, build-react] 
+    needs: [build-dreapp, build-react, build-app] 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
