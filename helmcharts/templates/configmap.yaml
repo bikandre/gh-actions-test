@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: postgres-config
+  namespace: default
 data:
   POSTGRES_DB: user_db
   POSTGRES_USER: postgres
@@ -11,6 +12,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-secret
+  namespace: default
 type: Opaque
 data:
   POSTGRES_PASSWORD: cGFzc3dvcmQ= # Base64-encoded "password"
