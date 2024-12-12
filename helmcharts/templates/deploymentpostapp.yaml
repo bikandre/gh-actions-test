@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-deployment
+  namespace: default
 spec:
   replicas: 2
   selector:
@@ -43,6 +44,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: flask-service
+  namespace: default
 spec:
   ports:
     - port: 80
