@@ -244,7 +244,7 @@ jobs:
           sed -i "s|webapp2: andrebik/s3andre:webapp2[^ ]*|webapp2: ${{ secrets.DOCKERHUBREPO }}:webapp2${TAG}|" helmcharts/values.yaml
           sed -i "/^reactapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}|" helmcharts/values.yaml || echo "reactapp: ${{ secrets.DOCKERHUBREPO }}:reactapp${TAG}" >> helmcharts/values.yaml
           sed -i "/^backend:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}|" helmcharts/values.yaml || echo "backend: ${{ secrets.DOCKERHUBREPO }}:backend${TAG}" >> helmcharts/values.yaml
-
+          sed -i "/^newapp:/s|:.*|: ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}|" helmcharts/values.yaml || echo "newapp: ${{ secrets.DOCKERHUBREPO }}:newapp${TAG}" >> helmcharts/values.yaml
       - name: Commit and push changes to values.yaml
         run: |
            git config --local user.name "GitHub Actions"
