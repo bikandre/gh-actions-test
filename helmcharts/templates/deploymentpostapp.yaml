@@ -4,7 +4,8 @@ metadata:
   name: flask-deployment
   namespace: default
 spec:
-  replicas: 2
+  revisionHistoryLimit: 2 
+  replicas: 1
   selector:
     matchLabels:
       app: flask-app
@@ -13,6 +14,8 @@ spec:
       labels:
         app: flask-app
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
         - name: flask-container
           image: {{ .Values.newapp }} # Replace with your image
