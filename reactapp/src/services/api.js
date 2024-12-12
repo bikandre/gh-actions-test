@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_URL = "http://app-ingress-check2-1182206137.us-east-1.elb.amazonaws.com/api/data";  // Internal service URL in Kubernetes
+const API_URL = "http://app-ingress-check2-1932067237.us-east-1.elb.amazonaws.com/api/data";  // Internal service URL in Kubernetes
 
 export const fetchData = async () => {
   try {
