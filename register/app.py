@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 import os
 
-app = Flask(__name__, static_folder='static')  # Specify static folder for static files
+app = Flask(__name__, static_folder='static')
 
 # Configuration for PostgreSQL database
 POSTGRES_USER = os.environ.get('POSTGRES_USER', 'postgres')
@@ -18,14 +18,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# User Model (Updated with address and location)
+# User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    name = db.Column(db.String(128), nullable=False)  # Added name field
-    address = db.Column(db.String(256), nullable=False)  # Added address field
-    location = db.Column(db.String(128), nullable=False)  # Added location field
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -33,31 +30,30 @@ class User(db.Model):
 # Route to register a new user
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    
-    if not data or not data.get('username') or not data.get('password') or not data.get('name') or not data.get('address') or not data.get('location'):
-        return jsonify({"error": "Username, password, name, address, and location are required"}), 400
+    try:
+        data = request.get_json()
+        if not data or not data.get('username') or not data.get('password'):
+            return jsonify({"error": "Username and password are required"}), 400
 
-    username = data['username']
-    password = data['password']
-    name = data['name']
-    address = data['address']
-    location = data['location']
+        username = data['username']
+        password = data['password']
 
-    # Check if user already exists
-    existing_user = User.query.filter_by(username=username).first()
-    if existing_user:
-        return jsonify({"error": "User already exists"}), 400
+        # Check if user already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return jsonify({"error": "User already exists"}), 400
 
-    # Hash the password
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Create a new user with the additional fields
-    new_user = User(username=username, password=hashed_password, name=name, address=address, location=location)
-    db.session.add(new_user)
-    db.session.commit()
+        # Create new user
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
 
-    return jsonify({"message": "User registered successfully"}), 201
+        return jsonify({"message": "User registered successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": f"Error registering user: {str(e)}"}), 500
 
 # Health check route
 @app.route('/health', methods=['GET'])
