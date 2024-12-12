@@ -60,7 +60,11 @@ def health():
 # Route to serve the index.html file
 @app.route('/')
 def index():
-    return send_from_directory(app.static_folder, 'index.html')
+    # Ensure the index.html exists in the static folder
+    if os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return send_from_directory(app.static_folder, 'index.html')
+    else:
+        return jsonify({"error": "index.html not found"}), 404
 
 if __name__ == '__main__':
     # Ensure tables are created
